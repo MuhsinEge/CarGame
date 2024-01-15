@@ -4,19 +4,20 @@ using Newtonsoft.Json;
 using Services;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utils;
 
 namespace ServiceLocator
 {
     public class Launcher : MonoBehaviour
     {
-        public TextAsset LevelData;
 
-        private void Awake()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Initialize()
         {
             Locator.Initialize();
             Application.targetFrameRate = 60;
             Locator.instance.Register(new PoolService());
-            Locator.instance.Register(new GamePlayService(JsonConvert.DeserializeObject<List<GridData>>(LevelData.text)));
+            Locator.instance.Register(new GamePlayService(LevelSaveSystem.LoadLevels()));
             SceneManager.LoadSceneAsync(1);
         }
     }
